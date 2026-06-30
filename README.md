@@ -10,7 +10,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-[Features](#-features) · [Architecture](#-architecture) · [Quick Start](#-quick-start) · [API](#-api-reference) · [Author](#-author)
+[Features](#features) · [Architecture](#architecture) · [Quick Start](#quick-start) · [API](#api-reference)
 
 </div>
 
@@ -202,7 +202,6 @@ See [`.env.example`](.env.example) for the full list.
 | `JWT_SECRET_KEY` | Yes | Secret for signing tokens |
 | `ADMIN_USER` / `ADMIN_PASS` | Yes | Seeded admin account |
 | `POSTGRES_*` | No | Database credentials (defaults in compose) |
-
 
 ## License
 
