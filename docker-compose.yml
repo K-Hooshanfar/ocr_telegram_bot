@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ocr-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ocr_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ocr_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-ocr_db}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ocr_user} -d ${POSTGRES_DB:-ocr_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: ocr-backend
+    ports:
+      - "8067:8067"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ocr_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ocr_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-ocr_db}
+      DB_HOST: db
+      POSTGRES_PORT: 5432
+    volumes:
+      - upload-data:/app/app/static/upload
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.bot
+    container_name: ocr-bot
+    depends_on:
+      - backend
+    env_file:
+      - .env
+    environment:
+      OCR_API_URL: http://backend:8067/ocr/upload
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      OCR_API_KEY: ${OCR_API_KEY}
+
+volumes:
+  db-data:
+  upload-data:
